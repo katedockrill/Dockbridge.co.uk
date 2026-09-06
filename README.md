@@ -30,25 +30,30 @@ npm run dev
 
 Then open http://localhost:3000.
 
-## Before you publish — 3 things to finish
+## Contact form setup
 
-1. **Wire up the contact form to actually send email.**
-   Right now `app/api/contact/route.ts` receives the form submission and
-   logs it, but doesn't send anything anywhere. Pick one:
-   - Easiest: sign up for [Resend](https://resend.com) (free tier is
-     plenty) and add ~5 lines to `route.ts` to send an email to
-     hello@dockbridge.co.uk. Their docs have a copy-paste Next.js example.
-   - Alternative: swap the form to post straight to
-     [Formspree](https://formspree.io) or Netlify Forms instead of your own
-     API route — no backend code needed at all.
+The contact form is wired to send enquiries to `hello@dockbridge.co.uk` through Resend.
 
-2. **Buy/point the domain.** Update `metadataBase` in `app/layout.tsx` if
-   the live domain differs from `dockbridge.co.uk`.
+Before it will send in production:
 
-3. **Have a solicitor glance at the Privacy Policy** (`app/privacy/page.tsx`).
-   It's a genuine, complete UK GDPR-style policy, but it's a template — it
-   flags this in a note on the page itself, which you should remove once
-   it's been checked and the "last updated" date is filled in.
+1. Create a Resend account.
+2. In Resend, add and verify the sending subdomain `mail.dockbridge.co.uk`. Using a subdomain keeps Resend's email-authentication DNS separate from the Google Workspace records on the root domain.
+3. Add the DNS records Resend gives you in Cloudflare and wait for the domain to show as verified.
+4. Create a Resend API key with sending access.
+5. In Vercel, open **Project → Settings → Environment Variables** and add:
+   - `RESEND_API_KEY` = your Resend API key
+   - `CONTACT_TO_EMAIL` = `hello@dockbridge.co.uk`
+   - `CONTACT_FROM_EMAIL` = `Dockbridge Website <enquiries@mail.dockbridge.co.uk>`
+6. Apply those variables to Production (and Preview if you want to test previews), then redeploy.
+7. Submit a real test enquiry at `/contact` and confirm it arrives at `hello@dockbridge.co.uk`. Replies to the notification will go directly to the visitor's email address.
+
+Do not put the Resend API key in source code or commit it to GitHub.
+
+## Before you publish — remaining checks
+
+1. **Domain.** `metadataBase` in `app/layout.tsx` is set for `dockbridge.co.uk`.
+2. **Privacy Policy.** Have a solicitor glance at `app/privacy/page.tsx`; it is a UK GDPR-style template and should be checked before relying on it publicly.
+3. **Contact form.** Complete the Resend setup above and test it end-to-end.
 
 ## Deploying
 
@@ -97,7 +102,3 @@ one of those.
 - Fonts: Playfair Display (serif, headings) + Inter (sans, everything
   else), loaded via `next/font/google` — no extra setup needed, and no
   external font request at runtime.
-
-## Deployment dependency update
-
-The deployment package has been updated from Next.js 14.2.5 to **Next.js 15.5.16**, with React/React DOM **19.1.0**. The previous 14.2.5 release is no longer suitable for production. The old lockfile was removed intentionally so the deployment platform can resolve a fresh dependency tree on the next install.
