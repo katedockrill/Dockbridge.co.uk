@@ -97,3 +97,7 @@ one of those.
 - Fonts: Playfair Display (serif, headings) + Inter (sans, everything
   else), loaded via `next/font/google` — no extra setup needed, and no
   external font request at runtime.
+
+## Deployment dependency update
+
+The deployment package has been updated from Next.js 14.2.5 to **Next.js 15.5.16**, with React/React DOM **19.1.0**. The previous 14.2.5 release is no longer suitable for production. The old lockfile was removed intentionally so the deployment platform can resolve a fresh dependency tree on the next install.
